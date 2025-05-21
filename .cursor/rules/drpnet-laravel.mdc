@@ -1,0 +1,76 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+1. **Website Portofolio Pribadi**
+   - Halaman profil, pengalaman, keahlian, kontak, dsb.
+
+2. **Posting Blog**
+   - CRUD artikel, kategori, tag, komentar, SEO.
+
+3. **Galeri/Foto**
+   - Upload, album, deskripsi, filter, lightbox.
+
+4. **Jualan Produk Digital**
+   - Daftar produk digital, detail produk, sistem pembayaran, download otomatis setelah pembayaran.
+
+5. **Integrasi Tripay**
+   - Pembayaran otomatis (VA, QRIS, e-wallet, dsb).
+
+6. **WhatsApp Gateway Custom**
+   - Notifikasi otomatis ke WhatsApp (misal: pembayaran, deposit, dsb).
+
+7. **Dashboard Admin & Member**
+   - Admin: kelola user, produk, blog, galeri, transaksi, dsb.
+   - Member: profil, deposit, transfer saldo, riwayat transaksi, download produk.
+
+8. **Sistem Deposit Member**
+   - Top up saldo via Tripay, riwayat deposit.
+
+9. **Transfer Saldo Antar Member**
+   - Fitur transfer saldo, riwayat transfer.
+
+10. **Koneksi ke MySQL**
+    - Semua data tersimpan di MySQL.
+
+11. **Notifikasi ke Member**
+    - Email, WhatsApp, notifikasi di dashboard.
+
+    ## Fitur Tambahan**
+1. **Multi Bahasa (Localization)**
+   - Bahasa Indonesia & Inggris.
+
+2. **Dark/Light Mode**
+   - Pilihan tema tampilan.
+
+3. **API untuk Mobile App**
+   - Jika ingin dikembangkan ke aplikasi mobile.
+
+4. **Integrasi Google Analytics**
+   - Pantau trafik website.
+
+5. **Sistem Referral**
+   - Member dapat mengajak teman dan mendapat komisi.
+
+6. **Sistem Komisi/Afiliasi**
+   - Komisi dari penjualan produk digital.
+
+7. **Sistem Rating & Review Produk**
+   - Member bisa memberi rating/review pada produk digital.
+
+8. **Backup Otomatis Database**
+   - Fitur backup data secara berkala.
+
+9. **Log Aktivitas User**
+   - Catat semua aktivitas penting user.
+
+10. **ReCAPTCHA**
+    - Untuk keamanan form (login, register, dsb).
+
+11. **Export Data**
+    - Export data transaksi, user, dsb ke Excel/CSV.
+
+12. **Integrasi Social Login**
+
+    - Login dengan Google, Facebook, dsb.
