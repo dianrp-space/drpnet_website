@@ -1,2 +1,13 @@
 User-agent: *
-Disallow:
+Allow: /
+Allow: /blog
+Allow: /shop
+Allow: /gallery
+
+Disallow: /admin/*
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+Disallow: /password/*
+
+Sitemap: https://drpnet.my.id/sitemap.xml

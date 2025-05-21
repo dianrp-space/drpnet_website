@@ -36,4 +36,16 @@ class Post extends Model
     {
         return $this->hasMany(BlogComment::class);
     }
+
+    public function getRelatedPosts($limit = 3)
+    {
+        return Post::where('id', '!=', $this->id)
+            ->whereHas('tags', function($query) {
+                $query->whereIn('tags.id', $this->tags->pluck('id'));
+            })
+            ->orWhere('category_id', $this->category_id)
+            ->latest()
+            ->take($limit)
+            ->get();
+    }
 }
