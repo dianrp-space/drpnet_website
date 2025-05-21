@@ -5,7 +5,22 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <!-- SEO Meta Tags -->
+        <title>{{ config('app.name', 'Laravel') }} - @yield('title', 'Digital Products & Services')</title>
+        <meta name="description" content="@yield('meta_description', 'DRP Network Solutions menyediakan produk digital dan layanan profesional untuk kebutuhan bisnis Anda.')">
+        <meta name="keywords" content="@yield('meta_keywords', 'produk digital, jasa web, development, hosting, domain')">
+        
+        <!-- Open Graph Meta Tags -->
+        <meta property="og:title" content="{{ config('app.name') }} - @yield('title', 'Digital Products & Services')">
+        <meta property="og:description" content="@yield('meta_description', 'DRP Network Solutions menyediakan produk digital dan layanan profesional untuk kebutuhan bisnis Anda.')">
+        <meta property="og:image" content="@yield('meta_image', asset('images/og-image.jpg'))">
+        <meta property="og:url" content="{{ url()->current() }}">
+        
+        <!-- Twitter Card Meta Tags -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="{{ config('app.name') }} - @yield('title', 'Digital Products & Services')">
+        <meta name="twitter:description" content="@yield('meta_description', 'DRP Network Solutions menyediakan produk digital dan layanan profesional untuk kebutuhan bisnis Anda.')">
+        <meta name="twitter:image" content="@yield('meta_image', asset('images/og-image.jpg'))">
 
         <!-- Favicon -->
         <link rel="icon" href="{{ asset('storage/' . \App\Models\Setting::get('site_favicon', 'images/favicon.ico')) }}">
@@ -20,6 +35,14 @@
         <style>
             [x-cloak] { display: none !important; }
         </style>
+
+        <!-- Canonical URL -->
+        <link rel="canonical" href="{{ url()->current() }}" />
+
+        <!-- Preload -->
+        <link rel="preload" href="{{ asset('fonts/your-main-font.woff2') }}" as="font" type="font/woff2" crossorigin>
+        <link rel="preload" href="{{ asset('css/app.css') }}" as="style">
+        <link rel="preload" href="{{ asset('js/app.js') }}" as="script">
     </head>
     <body class="font-sans antialiased bg-gray-100 dark:bg-gray-900 h-full">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">

@@ -6,6 +6,7 @@ use App\Models\Post;
 use App\Models\Category;
 use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class BlogController extends Controller
 {
@@ -31,21 +32,17 @@ class BlogController extends Controller
      */
     public function show($slug)
     {
-        $post = Post::where('slug', $slug)
-            ->where('status', 'publish')
-            ->with('category', 'user', 'tags')
-            ->withCount('comments')
-            ->firstOrFail();
-            
-        $related = Post::where('category_id', $post->category_id)
-            ->where('id', '!=', $post->id)
-            ->where('status', 'publish')
-            ->withCount('comments')
-            ->latest()
-            ->take(3)
-            ->get();
-            
-        return view('blog.show', compact('post', 'related'));
+        $post = Cache::remember('post.' . $slug, 3600, function () use ($slug) {
+            return Post::with(['author', 'category', 'tags', 'comments'])
+                ->where('slug', $slug)
+                ->firstOrFail();
+        });
+
+        $relatedPosts = Cache::remember('related_posts.' . $slug, 3600, function () use ($post) {
+            return $post->getRelatedPosts();
+        });
+
+        return view('blog.show', compact('post', 'relatedPosts'));
     }
     
     /**

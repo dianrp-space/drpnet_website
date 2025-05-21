@@ -91,4 +91,27 @@
             </div>
         </div>
     </div>
+
+    @section('schema')
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": "{{ $product->name }}",
+        "description": "{{ $product->description }}",
+        "image": "{{ $product->image_url }}",
+        "offers": {
+            "@type": "Offer",
+            "price": "{{ $product->price }}",
+            "priceCurrency": "IDR",
+            "availability": "https://schema.org/InStock"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "{{ $product->average_rating }}",
+            "reviewCount": "{{ $product->reviews_count }}"
+        }
+    }
+    </script>
+    @endsection
 </x-app-layout> 

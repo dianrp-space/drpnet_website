@@ -277,4 +277,31 @@
         }
     </script>
     @endpush
+
+    @section('schema')
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "{{ $post->title }}",
+        "image": "{{ $post->featured_image }}",
+        "datePublished": "{{ $post->created_at->toIso8601String() }}",
+        "dateModified": "{{ $post->updated_at->toIso8601String() }}",
+        "author": {
+            "@type": "Person",
+            "name": "{{ $post->author->name }}"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "{{ config('app.name') }}",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "{{ asset('images/logo.png') }}"
+            }
+        },
+        "description": "{{ $post->excerpt }}",
+        "articleBody": "{{ strip_tags($post->content) }}"
+    }
+    </script>
+    @endsection
 </x-app-layout> 
