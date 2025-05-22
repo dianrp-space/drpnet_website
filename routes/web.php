@@ -85,6 +85,7 @@ Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 // Blog Comments
 Route::get('/blog/{post}/comments', [\App\Http\Controllers\BlogCommentController::class, 'getComments'])->name('blog.comments.get');
 Route::post('/blog/{post}/comments', [\App\Http\Controllers\BlogCommentController::class, 'store'])->name('blog.comments.store');
+Route::delete('/blog/comments/{comment}', [\App\Http\Controllers\BlogCommentController::class, 'destroy'])->name('blog.comments.destroy');
 
 // Public gallery routes
 Route::get('/gallery', [GalleryViewController::class, 'index'])->name('gallery.index');
@@ -93,6 +94,7 @@ Route::get('/gallery/{gallery:slug}', [GalleryViewController::class, 'show'])->n
 // Gallery Comments
 Route::get('/gallery/{gallery}/comments', [\App\Http\Controllers\GalleryCommentController::class, 'getComments'])->name('gallery.comments.get');
 Route::post('/gallery/{gallery}/comments', [\App\Http\Controllers\GalleryCommentController::class, 'store'])->name('gallery.comments.store');
+Route::delete('/gallery/comments/{comment}', [\App\Http\Controllers\GalleryCommentController::class, 'destroy'])->name('gallery.comments.destroy');
 
 // Balance Management Routes
 Route::middleware(['auth', \App\Http\Middleware\RedirectIfProfileIncomplete::class])->group(function () {

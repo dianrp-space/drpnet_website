@@ -101,10 +101,17 @@
                                                     <span>U</span>
                                                 </template>
                                             </div>
-                                            <div>
+                                            <div class="flex-1">
                                                 <p class="text-sm font-medium" x-text="item.name || 'User'"></p>
                                                 <p class="text-xs text-gray-500 dark:text-gray-400" x-text="item.date"></p>
                                             </div>
+                                            @if(auth()->check() && auth()->user()->role === 'admin')
+                                            <button @click.prevent="deleteComment(item.id, index)" class="ml-2 text-red-500 hover:text-red-700" title="Hapus Komentar">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </button>
+                                            @endif
                                         </div>
                                         <p class="text-sm ml-10 text-gray-700 dark:text-gray-300" x-text="item.text"></p>
                                     </div>
@@ -195,9 +202,17 @@
                         }
                     })
                     .catch(error => {
-                        console.error('Error:', error);
-                        if (error.status === 422) {
-                            // Validation error
+                        if (error.status === 403) {
+                            error.json().then(data => {
+                                if (data.message) {
+                                    const loginUrl = '{{ route('login') }}';
+                                    const msg = `${data.message}<br><a href="${loginUrl}" class="text-blue-600 underline">Login di sini</a>`;
+                                    showCustomAlert(msg);
+                                } else {
+                                    alert('Anda harus login untuk memberikan komentar.');
+                                }
+                            });
+                        } else if (error.status === 422) {
                             error.json().then(data => {
                                 if (data.errors && data.errors.comment) {
                                     alert(data.errors.comment[0]);
@@ -231,8 +246,36 @@
                     .finally(() => {
                         this.isLoading = false;
                     });
+                },
+                deleteComment(commentId, index) {
+                    if (!confirm('Yakin ingin menghapus komentar ini?')) return;
+                    fetch(`/gallery/comments/${commentId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.comments.splice(index, 1);
+                        } else {
+                            alert('Gagal menghapus komentar.');
+                        }
+                    })
+                    .catch(() => alert('Gagal menghapus komentar.'));
                 }
             };
+        }
+
+        function showCustomAlert(message) {
+            let alertBox = document.createElement('div');
+            alertBox.innerHTML = `<div style="position:fixed;top:30px;left:50%;transform:translateX(-50%);z-index:9999;" class='bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded shadow-lg flex items-center'>
+                <span class='mr-2'>⚠️</span>
+                <span>${message}</span>
+                <button onclick='this.parentElement.parentElement.remove()' class='ml-4 text-red-700 font-bold'>&times;</button>
+            </div>`;
+            document.body.appendChild(alertBox);
         }
     </script>
     @endpush
