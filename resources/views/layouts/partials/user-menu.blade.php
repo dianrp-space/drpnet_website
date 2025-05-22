@@ -61,5 +61,20 @@
             class="block w-full px-4 py-2 text-left text-sm rounded-md {{ request()->routeIs('admin.settings.*') ? 'bg-indigo-100 dark:bg-indigo-800 text-indigo-700 dark:text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' }}">
             {{ __('Pengaturan Situs') }}
         </x-nav-link>
+
+        <x-nav-link :href="route('galleries.index')" :active="request()->routeIs('galleries.index') || request()->routeIs('galleries.create') || request()->routeIs('galleries.edit')" 
+            class="block w-full px-4 py-2 text-left text-sm rounded-md {{ request()->routeIs('galleries.index') || request()->routeIs('galleries.create') || request()->routeIs('galleries.edit') ? 'bg-indigo-100 dark:bg-indigo-800 text-indigo-700 dark:text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' }}">
+            {{ __('Manage Galeri') }}
+        </x-nav-link>
+
+        <x-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.index') || request()->routeIs('posts.create') || request()->routeIs('posts.edit')" 
+            class="block w-full px-4 py-2 text-left text-sm rounded-md {{ request()->routeIs('posts.index') || request()->routeIs('posts.create') || request()->routeIs('posts.edit') ? 'bg-indigo-100 dark:bg-indigo-800 text-indigo-700 dark:text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' }}">
+            {{ __('Manage Blog') }}
+        </x-nav-link>
+
+        <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.index') || request()->routeIs('products.create') || request()->routeIs('products.edit')" 
+            class="block w-full px-4 py-2 text-left text-sm rounded-md {{ request()->routeIs('products.index') || request()->routeIs('products.create') || request()->routeIs('products.edit') ? 'bg-indigo-100 dark:bg-indigo-800 text-indigo-700 dark:text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' }}">
+            {{ __('Manage Shop') }}
+        </x-nav-link>
     </div>
 @endif 

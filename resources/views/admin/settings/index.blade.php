@@ -94,6 +94,24 @@
                                 </div>
                             </div>
                             
+                            <!-- Shop Status Settings -->
+                            <div class="mt-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+                                <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ __('messages.shop_status') }}</h3>
+                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                    {{ __('messages.shop_status_description') }}
+                                </p>
+                                <div class="mt-4">
+                                    <label for="shop_status" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('messages.shop_status') }}</label>
+                                    <select id="shop_status" name="shop_status" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                                        <option value="open" {{ (isset($settings['shop_status']) && $settings['shop_status']->value == 'open') || !isset($settings['shop_status']) ? 'selected' : '' }}>{{ __('messages.shop_status_open') }}</option>
+                                        <option value="closed" {{ isset($settings['shop_status']) && $settings['shop_status']->value == 'closed' ? 'selected' : '' }}>{{ __('messages.shop_status_closed') }}</option>
+                                    </select>
+                                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                        {{ __('messages.shop_status_help') }}
+                                    </p>
+                                </div>
+                            </div>
+                            
                             <!-- Payment Gateway Settings -->
                             <div class="mt-8 pb-6 border-b border-gray-200 dark:border-gray-700">
                                 <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ __('Tripay Payment Gateway') }}</h3>

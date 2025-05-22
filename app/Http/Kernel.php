@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'complete_profile' => \App\Http\Middleware\RedirectIfProfileIncomplete::class,
         'is_admin' => \App\Http\Middleware\IsAdmin::class,
+        'check_shop_status' => \App\Http\Middleware\CheckShopStatus::class,
     ];
 } 

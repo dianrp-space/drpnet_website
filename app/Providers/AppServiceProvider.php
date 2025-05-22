@@ -21,6 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Schema::defaultStringLength(191);
+        
         // Load Tripay settings from database to override config values
         try {
             // Only run this code if the settings table exists
@@ -57,5 +59,10 @@ class AppServiceProvider extends ServiceProvider
             // Log error but don't crash the application
             \Log::error('Failed to load Tripay settings: ' . $e->getMessage());
         }
+
+        // Daftarkan middleware CheckShopStatus secara manual
+        $this->app->singleton('check_shop_status', function ($app) {
+            return new \App\Http\Middleware\CheckShopStatus;
+        });
     }
 }

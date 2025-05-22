@@ -68,11 +68,10 @@ class DepositController extends Controller
         ]);
         
         $user = Auth::user();
+        $isSandbox = config('services.tripay.sandbox', false); // Standarisasi pengecekan sandbox
         
-        // Mendapatkan nama metode pembayaran untuk deskripsi
         $paymentMethodName = $this->getPaymentMethodName($validatedData['payment_method']);
         
-        // Create a pending deposit transaction
         $transaction = Transaction::create([
             'user_id' => $user->id,
             'type' => 'deposit',
@@ -84,14 +83,22 @@ class DepositController extends Controller
             'reference' => 'DEP-' . Str::upper(Str::random(8))
         ]);
         
-        // Store reference in session for callback verification
         session(['payment_reference' => $transaction->reference, 'transaction_id' => $transaction->id]);
         
-        // Get Tripay API credentials from config
         $apiKey = config('services.tripay.api_key');
         $privateKey = config('services.tripay.private_key');
         $merchantCode = config('services.tripay.merchant_code');
         $apiUrl = config('services.tripay.api_url');
+        
+        // Validasi konfigurasi Tripay
+        if (empty($apiKey) || empty($privateKey) || empty($merchantCode) || empty($apiUrl)) {
+            if (!$isSandbox) {
+                return redirect()->route('balance.deposit')->with('error', 'Konfigurasi pembayaran (API Key/Merchant Code) belum lengkap. Silakan hubungi admin.');
+            }
+            // Mode Sandbox: boleh lanjut ke halaman simulasi dengan pesan error
+            return redirect()->route('deposit.payment', ['transaction' => $transaction->id])
+                ->with('error', 'Sandbox Mode: Konfigurasi Tripay tidak lengkap. Anda dapat melanjutkan dengan simulasi.');
+        }
         
         $data = [
             'method'         => $validatedData['payment_method'],
@@ -113,9 +120,7 @@ class DepositController extends Controller
         ];
         
         try {
-            // Make request to Tripay API to create transaction
             $curl = curl_init();
-            
             curl_setopt_array($curl, [
                 CURLOPT_FRESH_CONNECT  => true,
                 CURLOPT_URL            => $apiUrl . '/transaction/create',
@@ -127,52 +132,51 @@ class DepositController extends Controller
                 CURLOPT_POSTFIELDS     => http_build_query($data),
                 CURLOPT_IPRESOLVE      => CURL_IPRESOLVE_V4
             ]);
-            
-            $response = curl_exec($curl);
-            $error = curl_error($curl);
-            
+            $responseBody = curl_exec($curl);
+            $curlError = curl_error($curl);
+            $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             curl_close($curl);
             
-            if ($error) {
-                // Log the error
-                \Log::error('Tripay API Error: ' . $error);
-                
-                // For now, fallback to simulation
+            if ($curlError) {
+                \Log::error('Tripay API cURL Error: ' . $curlError);
+                if (!$isSandbox) {
+                    return redirect()->route('balance.deposit')
+                        ->with('error', 'Gagal terhubung ke payment gateway. Silakan coba lagi atau hubungi admin.');
+                }
                 return redirect()->route('deposit.payment', ['transaction' => $transaction->id])
-                    ->with('error', 'Gagal terhubung ke payment gateway. Mencoba simulasi lokal.');
+                    ->with('error', 'Sandbox Mode: Gagal terhubung ke Tripay API. ' . $curlError . '. Anda dapat melanjutkan simulasi.');
             }
             
-            $response = json_decode($response, true);
+            $response = json_decode($responseBody, true);
             
-            // Check if response is valid
             if (isset($response['success']) && $response['success'] === true && isset($response['data']['checkout_url'])) {
-                // Store the payment URL in the transaction
                 $transaction->update([
                     'tripay_url' => $response['data']['checkout_url'],
                     'tripay_reference' => $response['data']['reference'] ?? null,
                 ]);
-                
-                // Redirect to Tripay checkout page
                 return redirect($response['data']['checkout_url']);
             } else {
-                // Log the error response
-                \Log::error('Tripay API Response Error', $response);
-                
-                // Fallback to simulation
+                $tripayMessage = $response['message'] ?? 'Error tidak diketahui dari Tripay.';
+                if ($httpCode === 401) {
+                    $tripayMessage = 'API Key Tripay tidak valid atau belum diatur.';
+                }
+                \Log::error('Tripay API Response Error: ' . $tripayMessage, ['response' => $response, 'http_code' => $httpCode]);
+                if (!$isSandbox) {
+                    return redirect()->route('balance.deposit')
+                        ->with('error', 'Gagal membuat transaksi dengan payment gateway: ' . $tripayMessage . '. Silakan hubungi admin.');
+                }
                 return redirect()->route('deposit.payment', ['transaction' => $transaction->id])
-                    ->with('error', 'Gagal membuat transaksi. ' . ($response['message'] ?? 'Mencoba simulasi lokal.'));
+                    ->with('error', 'Sandbox Mode: Tripay API Error - ' . $tripayMessage . '. Anda dapat melanjutkan simulasi.');
             }
         } catch (\Exception $e) {
-            // Log exception
-            \Log::error('Tripay API Exception: ' . $e->getMessage());
-            
-            // Fallback to simulation for now
+            \Log::error('Tripay API Exception: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            if (!$isSandbox) {
+                return redirect()->route('balance.deposit')
+                    ->with('error', 'Terjadi kesalahan teknis saat memproses pembayaran. Silakan hubungi admin.');
+            }
             return redirect()->route('deposit.payment', ['transaction' => $transaction->id])
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage() . '. Mencoba simulasi lokal.');
+                ->with('error', 'Sandbox Mode: Exception - ' . $e->getMessage() . '. Anda dapat melanjutkan simulasi.');
         }
-        
-        // Fallback to simulation if all else fails
-        // return redirect()->route('deposit.payment', ['transaction' => $transaction->id]);
     }
     
     /**
@@ -230,52 +234,13 @@ class DepositController extends Controller
      */
     public function complete(Request $request, $transaction)
     {
-        $transaction = Transaction::findOrFail($transaction);
-        
-        // Check if transaction belongs to user
-        if ($transaction->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
+        // Proteksi: hanya boleh di sandbox, menggunakan config services
+        if (!config('services.tripay.sandbox', false)) {
+            abort(403, 'Fitur simulasi pembayaran sudah dinonaktifkan di mode produksi.');
         }
         
-        // Check if transaction is already processed
-        if ($transaction->status === 'success') {
-            return redirect()->route('balance.index')
-                    ->with('success', 'Your deposit has already been processed.');
-        }
-        
-        try {
-            // Use transaction to ensure data consistency
-            DB::beginTransaction();
-            
-            // Get user with fresh data
-            $user = User::find(Auth::id());
-            
-            // Get or create balance record properly
-            $balance = $user->balance()->firstOrCreate(['user_id' => $user->id], ['balance' => 0]);
-            
-            // Update balance directly without creating another transaction
-            $balance->increment('balance', $transaction->amount);
-            
-            // Update transaction status
-            $transaction->update(['status' => 'success']);
-            
-            DB::commit();
-            
-            // Send WhatsApp notification if enabled and user has phone number
-            if (!empty($user->phone)) {
-                $whatsAppService = app(WhatsAppService::class);
-                $whatsAppService->sendDepositNotification($user, $transaction->amount, $balance->balance);
-            }
-            
-            return redirect()->route('balance.index')
-                    ->with('success', 'Your deposit of ' . number_format($transaction->amount, 2) . ' has been completed successfully!');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            \Log::error('Deposit completion failed: ' . $e->getMessage());
-            
-            return redirect()->route('balance.index')
-                    ->with('error', 'Failed to process your deposit. Please try again or contact support.');
-        }
+        // Nonaktifkan endpoint simulasi di produksi
+        abort(403, 'Fitur simulasi pembayaran sudah dinonaktifkan di produksi.');
     }
     
     /**

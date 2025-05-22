@@ -10,7 +10,14 @@ use App\Http\Controllers\GalleryViewController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Middleware\IsAdmin;
+use App\Http\Controllers\ShopClosedController;
 
+// Route sederhana untuk halaman toko tutup
+Route::get('shop/closed', function () {
+    return view('shop.closed');
+})->name('shop.closed');
+
+// Route dasar
 Route::get('/', function () {
     return view('welcome');
 });
@@ -57,6 +64,9 @@ Route::middleware(['auth', \App\Http\Middleware\RedirectIfProfileIncomplete::cla
     Route::resource('posts', \App\Http\Controllers\PostController::class);
     Route::resource('galleries', GalleryController::class);
     Route::resource('products', ProductController::class);
+    
+    // Toggle shop status route
+    Route::post('/products/toggle-shop-status', [ProductController::class, 'toggleShopStatus'])->name('products.toggle-shop-status');
 });
 
 // Admin routes
@@ -133,6 +143,31 @@ Route::middleware(['auth'])->group(function () {
         ->name('complete-profile');
     Route::post('/complete-profile', [App\Http\Controllers\CompleteProfileController::class, 'update'])
         ->name('complete-profile.update');
+});
+
+// Grup route untuk toko yang akan dicek statusnya
+Route::middleware([\App\Http\Middleware\CheckShopStatus::class])->group(function () {
+    Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
+    Route::get('/shop/product/{product:slug}', [ShopController::class, 'show'])->name('shop.show');
+    
+    // Route yang memerlukan login untuk diakses
+    Route::middleware(['auth', 'verified'])->group(function () {
+        Route::post('/shop/product/{product}/purchase', [ShopController::class, 'purchase'])->name('shop.purchase');
+        Route::get('/shop/payment/{purchase}', [ShopController::class, 'payment'])->name('shop.payment');
+        Route::post('/shop/payment/{purchase}/process', [ShopController::class, 'processPayment'])->name('shop.process-payment');
+        Route::get('/shop/payment-success/{purchase}', [ShopController::class, 'paymentSuccess'])->name('shop.payment-success');
+        Route::post('/shop/payment/{purchase}/cancel', [ShopController::class, 'cancelPayment'])->name('shop.cancel-payment');
+        Route::get('/shop/download/{product}', [ShopController::class, 'download'])->name('shop.download');
+        Route::get('/my-purchases', [ShopController::class, 'myPurchases'])->name('shop.my-purchases');
+
+        // Cart Routes
+        Route::get('/cart', [App\Http\Controllers\CartController::class, 'index'])->name('cart.index');
+        Route::post('/cart/add/{product}', [App\Http\Controllers\CartController::class, 'addToCart'])->name('cart.add');
+        Route::patch('/cart/update/{cartItem}', [App\Http\Controllers\CartController::class, 'updateQuantity'])->name('cart.update');
+        Route::delete('/cart/remove/{cartItem}', [App\Http\Controllers\CartController::class, 'removeItem'])->name('cart.remove');
+        Route::post('/cart/clear', [App\Http\Controllers\CartController::class, 'clearCart'])->name('cart.clear');
+        Route::post('/cart/checkout', [App\Http\Controllers\CartController::class, 'checkout'])->name('cart.checkout');
+    });
 });
 
 require __DIR__.'/auth.php';
