@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -20,7 +21,8 @@ class ProductController extends Controller
         }
         
         $products = Product::latest()->paginate(10);
-        return view('products.index', compact('products'));
+        $shopStatus = Setting::get('shop_status', 'open');
+        return view('products.index', compact('products', 'shopStatus'));
     }
 
     /**
@@ -154,5 +156,28 @@ class ProductController extends Controller
         Storage::disk('public')->delete($product->file_path);
         $product->delete();
         return redirect()->route('products.index')->with('success', 'Produk digital berhasil dihapus.');
+    }
+
+    /**
+     * Toggle shop status (open/closed)
+     */
+    public function toggleShopStatus(Request $request)
+    {
+        // Check if user is admin
+        if (auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized.');
+        }
+
+        $request->validate([
+            'shop_status' => 'required|in:open,closed',
+        ]);
+
+        Setting::set('shop_status', $request->shop_status, 'general');
+
+        return redirect()->route('products.index')->with('success', 
+            $request->shop_status === 'open' 
+                ? 'Toko digital berhasil dibuka.' 
+                : 'Toko digital berhasil ditutup.'
+        );
     }
 }

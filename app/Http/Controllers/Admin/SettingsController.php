@@ -59,6 +59,9 @@ class SettingsController extends Controller
         // Checkbox handling for sandbox mode
         Setting::set('tripay_sandbox', $request->has('tripay_sandbox') ? "1" : "0", 'payment');
         
+        // Shop Status (Open/Closed)
+        Setting::set('shop_status', $request->input('shop_status', 'open'), 'general');
+        
         // Update WhatsApp Settings
         if ($request->has('whatsapp_api_url')) {
             Setting::set('whatsapp_api_url', $request->whatsapp_api_url, 'notification');

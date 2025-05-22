@@ -92,4 +92,15 @@ return [
     'Failed to send password reset link via WhatsApp. Please try again later or use email.' => 'Gagal mengirimkan tautan pengaturan ulang kata sandi melalui WhatsApp. Silakan coba lagi nanti atau gunakan email.',
     'We could not find a user with that WhatsApp number. Please ensure the number is registered and correct.' => 'Kami tidak dapat menemukan pengguna dengan nomor WhatsApp tersebut. Pastikan nomor terdaftar dan benar.',
     'We could not find a user with that WhatsApp number or associated email.' => 'Kami tidak dapat menemukan pengguna dengan nomor WhatsApp atau email terkait tersebut.',
+    // Tambahkan terjemahan untuk fitur buka/tutup toko
+    'shop_status' => 'Status Toko',
+    'shop_status_open' => 'Buka (Aktif)',
+    'shop_status_closed' => 'Tutup (Mode Pemeliharaan)',
+    'shop_status_description' => 'Mengontrol apakah toko digital Anda dalam keadaan buka atau tutup untuk pemeliharaan.',
+    'shop_status_help' => 'Jika ditutup, pelanggan tidak akan dapat menjelajahi atau membeli produk. Admin tetap dapat mengakses toko.',
+    'shop_closed_title' => 'Toko Kami Sedang Tutup',
+    'shop_closed_message' => 'Kami sedang melakukan pemeliharaan atau toko sementara tidak tersedia. Silakan periksa kembali nanti.',
+    'go_to_dashboard' => 'Kembali ke Dashboard',
+    'read_our_blog' => 'Baca Blog Kami',
+    'view_our_gallery' => 'Lihat Galeri Kami',
 ]; 

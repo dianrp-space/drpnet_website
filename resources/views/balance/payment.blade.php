@@ -89,30 +89,22 @@
                                 </svg>
                             </div>
                             <div class="ml-3">
-                                <h3 class="text-sm font-medium text-blue-800 dark:text-blue-200">Payment Instructions</h3>
+                                <h3 class="text-sm font-medium text-blue-800 dark:text-blue-200">Petunjuk Pembayaran</h3>
                                 <div class="mt-2 text-sm text-blue-700 dark:text-blue-300">
-                                    <p>This is a simulation. In a real application, payment instructions from Tripay would be displayed here.</p>
-                                    <p class="mt-1">For testing purposes, please use the buttons below to complete or cancel the payment.</p>
+                                    <p>Silakan lakukan pembayaran sesuai instruksi yang diberikan oleh Tripay pada halaman pembayaran.</p>
+                                    <p class="mt-1">Saldo akan otomatis masuk setelah pembayaran sukses.</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
-                        <form method="POST" action="{{ route('deposit.complete', $transaction->id) }}">
-                            @csrf
-                            <x-primary-button>
-                                {{ __('Complete Payment') }}
-                            </x-primary-button>
-                        </form>
-                        
                         <form method="POST" action="{{ route('deposit.cancel', $transaction->id) }}">
                             @csrf
                             <x-secondary-button type="submit">
                                 {{ __('Cancel Payment') }}
                             </x-secondary-button>
                         </form>
-                        
                         <a href="{{ route('balance.index') }}" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
                             {{ __('Back to Balance') }}
                         </a>

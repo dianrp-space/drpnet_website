@@ -325,8 +325,11 @@ class ShopController extends Controller
      */
     public function myPurchases()
     {
-        $purchases = auth()->user()->purchases()->with('product')->latest()->paginate(10);
-        return view('shop.my-purchases', compact('purchases'));
+        $user = auth()->user();
+        $purchases = $user->purchases()->with('product')->latest()->paginate(10, ['*'], 'purchases_page');
+        $depositTransactions = $user->transactions()->where('type', 'deposit')->latest()->paginate(10, ['*'], 'deposits_page');
+
+        return view('shop.my-purchases', compact('purchases', 'depositTransactions'));
     }
     
     /**
