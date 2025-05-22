@@ -41,7 +41,7 @@
             <!-- Navigation -->
             <nav class="absolute top-0 left-0 right-0 z-50 bg-gray-900/70 dark:bg-black/70 backdrop-blur-sm border-b border-gray-200/10 dark:border-gray-700/30">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between h-16">
+                    <div class="flex justify-between h-14">
                         <div class="flex">
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center">
@@ -51,9 +51,9 @@
                                     @endphp
                                     
                                     @if($logoPath)
-                                        <img src="{{ asset('storage/' . $logoPath) }}" alt="{{ config('app.name') }}" class="h-10">
+                                        <img src="{{ asset('storage/' . $logoPath) }}" alt="{{ config('app.name') }}" class="h-8">
                                     @else
-                                        <span class="text-2xl font-bold text-white">
+                                        <span class="text-xl font-bold text-white">
                                             DRP Network Solutions
                                         </span>
                                     @endif
@@ -61,7 +61,7 @@
                             </div>
 
                             <!-- Navigation Links -->
-                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                            <div class="hidden space-x-6 sm:-my-px sm:ml-6 sm:flex">
                                 <a href="{{ route('blog.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-100 hover:text-white hover:border-white">
                                     {{ __('Blog') }}
                                 </a>
@@ -75,30 +75,26 @@
                         </div>
 
                         <!-- Settings Dropdown -->
-                        <div class="hidden sm:flex sm:items-center sm:ml-6">
-                            <!-- Dark mode toggle -->
-                            <button @click="$store.theme.toggle()" class="inline-flex items-center justify-center p-2 mx-2 rounded-md text-gray-100 hover:text-white transition duration-150 ease-in-out">
-                                <svg x-show="!$store.theme.dark" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                                </svg>
-                                <svg x-show="$store.theme.dark" x-cloak class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                                </svg>
-                            </button>
-                            
+                        <div class="hidden sm:flex sm:items-center sm:ml-4">
                             @if (Route::has('login'))
-                                <div class="flex space-x-4">
+                                <div class="flex space-x-3">
                                     @auth
-                                        <a href="{{ url('/dashboard') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        <a href="{{ url('/dashboard') }}" class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                             {{ __('Member Area') }}
                                         </a>
+                                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                                            @csrf
+                                            <button type="submit" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-white bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                                {{ __('Logout') }}
+                                            </button>
+                                        </form>
                                     @else
-                                        <a href="{{ route('login') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-white bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        <a href="{{ route('login') }}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-white bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                             {{ __('Login Member') }}
                                         </a>
 
                                         @if (Route::has('register'))
-                                            <a href="{{ route('register') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                            <a href="{{ route('register') }}" class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                                 {{ __('Register') }}
                                             </a>
                                         @endif
@@ -109,15 +105,61 @@
 
                         <!-- Hamburger -->
                         <div class="-mr-2 flex items-center sm:hidden">
-                            <button class="inline-flex items-center justify-center p-2 rounded-md text-gray-100 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white transition duration-150 ease-in-out">
-                                <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            <button id="mobile-menu-button-welcome" class="inline-flex items-center justify-center p-2 rounded-md text-gray-100 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white transition duration-150 ease-in-out">
+                                <svg class="h-5 w-5" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                    <path id="hamburger-icon" class="block" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                    <path id="close-icon" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
                         </div>
                     </div>
                 </div>
             </nav>
+
+            <!-- Mobile menu -->
+            <div id="mobile-menu-welcome" class="hidden sm:hidden bg-gray-900/90 backdrop-blur-md fixed w-full z-50">
+                <div class="relative pt-2 pb-3 px-4">
+                    <!-- Tombol Close -->
+                    <button id="close-mobile-menu-welcome" class="absolute top-2 right-4 p-2 rounded-md text-white hover:bg-gray-700 focus:outline-none">
+                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+
+                    <!-- Menu Items -->
+                    <div class="space-y-1 mt-8">
+                        <a href="{{ route('blog.index') }}" class="block py-2 px-3 text-base font-medium text-white hover:bg-gray-700 rounded-md">
+                            {{ __('Blog') }}
+                        </a>
+                        <a href="{{ route('gallery.index') }}" class="block py-2 px-3 text-base font-medium text-white hover:bg-gray-700 rounded-md">
+                            {{ __('Galeri') }}
+                        </a>
+                        <a href="{{ route('shop.index') }}" class="block py-2 px-3 text-base font-medium text-white hover:bg-gray-700 rounded-md">
+                            {{ __('Toko') }}
+                        </a>
+                        @auth
+                            <a href="{{ route('dashboard') }}" class="block py-2 px-3 text-base font-medium text-white hover:bg-gray-700 rounded-md">
+                                {{ __('Area Member') }}
+                            </a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="w-full text-left py-2 px-3 text-base font-medium text-white hover:bg-gray-700 rounded-md">
+                                    {{ __('Logout') }}
+                                </button>
+                            </form>
+                        @else
+                            <a href="{{ route('login') }}" class="block py-2 px-3 text-base font-medium text-white hover:bg-gray-700 rounded-md">
+                                {{ __('Login Member') }}
+                            </a>
+                            @if (Route::has('register'))
+                                <a href="{{ route('register') }}" class="block py-2 px-3 text-base font-medium text-white hover:bg-gray-700 rounded-md">
+                                    {{ __('Register') }}
+                                </a>
+                            @endif
+                        @endauth
+                    </div>
+                </div>
+            </div>
 
             <!-- Hero Section -->
             <div class="relative min-h-[80vh] flex items-center">
@@ -379,5 +421,48 @@
         </script>
         @stack('scripts')
         <x-tawk-chat />
+
+        <!-- Add JavaScript for mobile menu toggle -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const mobileMenuButton = document.getElementById('mobile-menu-button-welcome');
+                const closeMobileMenuButton = document.getElementById('close-mobile-menu-welcome');
+                const mobileMenu = document.getElementById('mobile-menu-welcome');
+                const hamburgerIcon = document.getElementById('hamburger-icon');
+                const closeIcon = document.getElementById('close-icon');
+                
+                function openMenu() {
+                    mobileMenu.classList.remove('hidden');
+                    hamburgerIcon.classList.add('hidden');
+                    closeIcon.classList.remove('hidden');
+                }
+                
+                function closeMenu() {
+                    mobileMenu.classList.add('hidden');
+                    hamburgerIcon.classList.remove('hidden');
+                    closeIcon.classList.add('hidden');
+                }
+                
+                if (mobileMenuButton && mobileMenu) {
+                    mobileMenuButton.addEventListener('click', function() {
+                        if (mobileMenu.classList.contains('hidden')) {
+                            openMenu();
+                        } else {
+                            closeMenu();
+                        }
+                    });
+                }
+                
+                if (closeMobileMenuButton) {
+                    closeMobileMenuButton.addEventListener('click', closeMenu);
+                }
+
+                // Menutup menu saat mengklik link di dalam menu
+                const menuLinks = mobileMenu.querySelectorAll('a');
+                menuLinks.forEach(link => {
+                    link.addEventListener('click', closeMenu);
+                });
+            });
+        </script>
     </body>
 </html>

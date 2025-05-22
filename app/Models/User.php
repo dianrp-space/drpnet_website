@@ -24,6 +24,7 @@ class User extends Authenticatable
         'phone',
         'password',
         'role',
+        'profile_photo',
     ];
 
     /**
@@ -139,5 +140,16 @@ class User extends Authenticatable
         }
         
         return $this->cart;
+    }
+
+    /**
+     * Get the profile photo URL or null if not set
+     */
+    public function getProfilePhotoUrlAttribute()
+    {
+        if ($this->profile_photo) {
+            return asset('storage/' . $this->profile_photo);
+        }
+        return null;
     }
 }

@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("alpine:init", () => {
     // Create sidebar store
     Alpine.store("sidebar", {
-        open: localStorage.getItem("sidebar-state") !== "closed",
+        open: false,
 
         toggle() {
             this.open = !this.open;

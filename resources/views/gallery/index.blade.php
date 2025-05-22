@@ -14,20 +14,38 @@
                     @if($galleries->isEmpty())
                         <p class="text-center py-8 text-gray-600 dark:text-gray-400">{{ __('No gallery items available.') }}</p>
                     @else
-                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                             @foreach($galleries as $gallery)
                                 @php
-                                    // Bersihkan deskripsi untuk digunakan di JavaScript string
                                     $safeDescription = e(str_replace(["\r", "\n"], ' ', $gallery->description));
                                 @endphp
-                                <div class="group bg-white dark:bg-gray-700 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 aspect-w-1 aspect-h-1">
+                                <div class="group relative bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 aspect-w-1 aspect-h-1">
                                     @if($gallery->image_path)
                                         <img src="{{ asset('storage/' . $gallery->image_path) }}" 
                                              alt="{{ $gallery->title }}" 
-                                             class="w-full h-full object-cover cursor-pointer transform group-hover:scale-105 transition-transform duration-300"
-                                             @click="openLightbox({{ $gallery->id }}, '{{ asset('storage/' . $gallery->image_path) }}', '{{ e($gallery->title) }}', '{{ $safeDescription }}')">
+                                             class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+                                             @click.stop="openLightbox({{ $gallery->id }}, '{{ asset('storage/' . $gallery->image_path) }}', '{{ e($gallery->title) }}', '{{ $safeDescription }}')">
+                                        
+                                        <!-- Overlay for icons -->
+                                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex flex-col items-center justify-center p-2 opacity-0 group-hover:opacity-100 cursor-pointer" 
+                                             @click.stop="openLightbox({{ $gallery->id }}, '{{ asset('storage/' . $gallery->image_path) }}', '{{ e($gallery->title) }}', '{{ $safeDescription }}')">
+                                            
+                                            <div class="text-white text-center">
+                                                <!-- Icon Lihat Gambar -->
+                                                <svg class="w-10 h-10 mb-2 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                                <p class="text-xs font-semibold">{{ __('View Image') }}</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Info Komentar di bawah gambar -->
+                                        <div class="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent group-hover:from-black/80 transition-all duration-300">
+                                            <div class="flex items-center justify-end text-xs text-white">
+                                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd"></path></svg>
+                                                <span>{{ $gallery->comments_count }}</span>
+                                            </div>
+                                        </div>
                                     @else
-                                        <div class="w-full h-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+                                        <div class="w-full h-48 bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
                                             <span class="text-gray-400 dark:text-gray-300">{{ __('No image') }}</span>
                                         </div>
                                     @endif
@@ -62,18 +80,18 @@
                 
                 <!-- Image Container -->
                 <div class="w-full md:w-2/3 flex-shrink-0 bg-black flex items-center justify-center p-2 md:p-0">
-                    <img :src="currentImage" alt="Lightbox Image" class="max-w-full max-h-[50vh] md:max-h-[calc(90vh-2rem)] object-contain rounded-l-lg md:rounded-l-none">
+                    <img :src="currentImage" alt="Lightbox Image" class="max-w-full max-h-[40vh] sm:max-h-[50vh] md:max-h-[calc(90vh-2rem)] object-contain rounded-l-lg md:rounded-l-none">
                 </div>
 
                 <!-- Text Info Container -->
                 <div class="w-full md:w-1/3 p-4 md:p-6 text-gray-900 dark:text-gray-100 overflow-y-auto flex-grow flex flex-col">
                     <h3 class="text-xl lg:text-2xl font-semibold mb-2 md:mb-4" x-text="currentTitle"></h3>
-                    <div class="prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 mb-4" x-html="currentDescription"></div>
+                    <div class="prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 mb-4 flex-shrink-0" x-html="currentDescription"></div>
                     
                     <!-- Komentar Section -->
-                    <div class="mt-auto">
-                        <h4 class="font-medium text-lg mb-2">{{ __('Comments') }}</h4>
-                        <div class="border dark:border-gray-700 rounded-lg p-3 mb-4 max-h-40 overflow-y-auto bg-gray-50 dark:bg-gray-700">
+                    <div class="mt-auto flex flex-col flex-1 min-h-0">
+                        <h4 class="font-medium text-lg mb-2 flex-shrink-0">{{ __('Comments') }}</h4>
+                        <div class="border dark:border-gray-700 rounded-lg p-3 mb-4 flex-1 min-h-[150px] overflow-y-auto bg-gray-50 dark:bg-gray-700">
                             <!-- Loading indicator -->
                             <div x-show="isLoading" class="text-center py-2">
                                 <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-indigo-500 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -93,14 +111,14 @@
                                 <template x-for="(item, index) in comments" :key="index">
                                     <div class="border-b dark:border-gray-600 pb-2 mb-2 last:border-0 last:mb-0 last:pb-0">
                                         <div class="flex items-center mb-1">
-                                            <div class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white font-semibold text-sm mr-2">
-                                                <template x-if="item.name">
-                                                    <span x-text="item.name.charAt(0).toUpperCase()"></span>
-                                                </template>
-                                                <template x-if="!item.name">
-                                                    <span>U</span>
-                                                </template>
-                                            </div>
+                                            <template x-if="item.profile_photo_url">
+                                                <img :src="item.profile_photo_url" alt="Foto Profil" class="w-8 h-8 rounded-full object-cover border mr-2" />
+                                            </template>
+                                            <template x-if="!item.profile_photo_url">
+                                                <div class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white font-semibold text-sm mr-2">
+                                                    <span x-text="item.name ? item.name.charAt(0).toUpperCase() : 'U'"></span>
+                                                </div>
+                                            </template>
                                             <div class="flex-1">
                                                 <p class="text-sm font-medium" x-text="item.name || 'User'"></p>
                                                 <p class="text-xs text-gray-500 dark:text-gray-400" x-text="item.date"></p>
@@ -120,7 +138,7 @@
                         </div>
                         
                         <!-- Form Komentar -->
-                        <form @submit.prevent="submitComment()" class="mt-2">
+                        <form @submit.prevent="submitComment()" class="mt-2 flex-shrink-0">
                             <div class="mb-2">
                                 <label for="comment" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('Add a comment') }}</label>
                                 <textarea 

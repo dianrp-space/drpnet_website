@@ -189,7 +189,11 @@
                             <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">About the Author</h3>
                             <div class="flex items-center mb-4">
                                 <div class="w-12 h-12 bg-gray-300 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 font-bold text-xl">
-                                    {{ substr($post->user->name, 0, 1) }}
+                                    @if($post->user->profile_photo)
+                                        <img src="{{ $post->user->profile_photo_url }}" alt="Foto Profil" class="w-12 h-12 rounded-full object-cover border" />
+                                    @else
+                                        {{ substr($post->user->name, 0, 1) }}
+                                    @endif
                                 </div>
                                 <div class="ml-4">
                                     <h4 class="font-semibold text-gray-800 dark:text-gray-200">{{ $post->user->name }}</h4>

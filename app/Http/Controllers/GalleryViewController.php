@@ -13,6 +13,7 @@ class GalleryViewController extends Controller
     public function index()
     {
         $galleries = Gallery::with('user')
+            ->withCount('comments')
             ->latest()
             ->paginate(12);
             

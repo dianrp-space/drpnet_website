@@ -59,7 +59,8 @@ class GalleryCommentController extends Controller
                     'name' => $comment->user ? $comment->user->name : ($comment->guest_name ?: 'Guest'),
                     'text' => $comment->comment,
                     'date' => $comment->created_at->format('d M Y H:i'),
-                    'user_id' => $comment->user_id
+                    'user_id' => $comment->user_id,
+                    'profile_photo_url' => $comment->user ? $comment->user->profile_photo_url : null,
                 ];
             });
 
