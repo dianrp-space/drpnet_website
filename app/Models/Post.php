@@ -37,6 +37,11 @@ class Post extends Model
         return $this->hasMany(BlogComment::class);
     }
 
+    public function author()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function getRelatedPosts($limit = 3)
     {
         return Post::where('id', '!=', $this->id)

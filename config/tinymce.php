@@ -10,7 +10,7 @@ return [
     | https://www.tiny.cloud/
     |
     */
-    'api_key' => env('TINYMCE_API_KEY', 'dgbmsal1wm6u2ct4605vj5h207kpfgglfz92ma5p6yw12y0i'),
+    'api_key' => env('TINYMCE_API_KEY'),
 
     /*
     |--------------------------------------------------------------------------

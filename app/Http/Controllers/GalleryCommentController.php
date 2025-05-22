@@ -19,24 +19,16 @@ class GalleryCommentController extends Controller
      */
     public function store(GalleryCommentRequest $request, Gallery $gallery)
     {
+        if (!auth()->check()) {
+            return response()->json(['success' => false, 'message' => 'Hanya user terdaftar yang bisa berkomentar.'], 403);
+        }
         $comment = new GalleryComment();
         $comment->gallery_id = $gallery->id;
         $comment->comment = $request->comment;
-        
-        if (Auth::check()) {
-            $comment->user_id = Auth::id();
-        } else {
-            $comment->guest_name = 'Guest';
-        }
-
+        $comment->user_id = auth()->id();
         $comment->save();
-
-        // Format tanggal untuk respons
         $formattedDate = $comment->created_at->format('d M Y H:i');
-        
-        // Siapkan nama untuk ditampilkan
-        $name = Auth::check() ? Auth::user()->name : 'Guest';
-
+        $name = auth()->user()->name;
         return response()->json([
             'success' => true,
             'comment' => [
@@ -75,5 +67,17 @@ class GalleryCommentController extends Controller
             'success' => true,
             'comments' => $comments
         ]);
+    }
+
+    /**
+     * Hapus komentar galeri (khusus admin).
+     */
+    public function destroy(GalleryComment $comment)
+    {
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+        $comment->delete();
+        return response()->json(['success' => true]);
     }
 } 

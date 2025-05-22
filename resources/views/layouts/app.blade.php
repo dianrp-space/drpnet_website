@@ -45,6 +45,25 @@
         <link rel="preload" href="{{ asset('js/app.js') }}" as="script">
     </head>
     <body class="font-sans antialiased bg-gray-100 dark:bg-gray-900 h-full">
+        <!-- Global Loader -->
+        <div id="global-loader" style="position:fixed;z-index:99999;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.85);backdrop-filter:blur(2px);transition:opacity .3s;">
+            <div class="flex flex-col items-center">
+                <svg class="animate-spin h-14 w-14 text-indigo-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="text-lg font-semibold text-indigo-700">Memuat halaman...</span>
+            </div>
+        </div>
+        <script>
+            window.addEventListener('DOMContentLoaded', () => {
+                setTimeout(() => {
+                    const loader = document.getElementById('global-loader');
+                    if(loader) loader.style.opacity = 0;
+                    setTimeout(() => { if(loader) loader.style.display = 'none'; }, 400);
+                }, 600); // Loader minimal tampil 600ms agar smooth
+            });
+        </script>
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             @include('layouts.navigation')
 
