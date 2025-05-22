@@ -13,7 +13,7 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="mt-6 space-y-6">
         @csrf
         @method('patch')
 
@@ -54,6 +54,21 @@
                 {{ __('Enter your WhatsApp number with country code (no + sign). Only digits allowed.') }}
             </p>
             <x-input-error class="mt-2" :messages="$errors->get('phone')" />
+        </div>
+
+        <div class="mb-4">
+            <x-input-label for="profile_photo" :value="__('Foto Profil')" />
+            <div class="flex items-center gap-4 mt-2">
+                @if($user->profile_photo)
+                    <img src="{{ $user->profile_photo_url }}" alt="Foto Profil" class="w-16 h-16 rounded-full object-cover border" />
+                @else
+                    <div class="w-16 h-16 rounded-full bg-indigo-500 flex items-center justify-center text-white text-2xl font-bold border">
+                        {{ strtoupper(substr($user->name,0,1)) }}
+                    </div>
+                @endif
+                <input id="profile_photo" name="profile_photo" type="file" accept="image/*" class="block text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+            </div>
+            <x-input-error class="mt-2" :messages="$errors->get('profile_photo')" />
         </div>
 
         <div class="flex items-center gap-4">
